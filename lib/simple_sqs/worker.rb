@@ -23,7 +23,7 @@ class SimpleSqs::Worker
       trap "TERM", -> (*args) { stop_polling }
     end
 
-    @poller.poll(visibility_timeout: 5, idle_timeout: 0, wait_time_seconds: 20) do |message|
+    @poller.poll(visibility_timeout: 5) do |message|
       process(message)
     end
   end
