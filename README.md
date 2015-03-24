@@ -32,7 +32,7 @@ SimpleSqs::EVENTS_NAMESPACE = MyApp::Sqs::Events
 You can have a daemon on Heroku, as an example, by puttin a line like this in your `Procfile`:
 
 ```
-sqs: env bundle exec rake simple_sqs:daemon
+sqs: env SIMPLE_SQS_QUEUE_URL=http://.... bundle exec rake simple_sqs:daemon
 ```
 
 
