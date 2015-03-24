@@ -27,6 +27,14 @@ The way that SimpleSqs works is that you will enqueue messages with an `event_na
 SimpleSqs::EVENTS_NAMESPACE = MyApp::Sqs::Events
 ```
 
+Some more configuration needed:
+
+```
+export SIMPLE_SQS_PUBLIC_KEY=...
+export SIMPLE_SQS_SECRET_KEY=...
+export SIMPLE_SQS_REGION=...
+```
+
 ## Usage
 
 You can have a daemon on Heroku, as an example, by puttin a line like this in your `Procfile`:
