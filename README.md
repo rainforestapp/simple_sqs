@@ -35,13 +35,23 @@ You can have a daemon on Heroku, as an example, by puttin a line like this in yo
 sqs: env SIMPLE_SQS_QUEUE_URL=http://.... bundle exec rake simple_sqs:daemon
 ```
 
-
-
 To enqueue new messages:
 
 ```ruby
 q = SimpleSqs::Queue.new(queue_url: "https://sqs.us-east-1.amazonaws.com...../my-queue-name")
 q.send_message(event_name: 'MyEvent', arguments: ['ok', 1])
+```
+
+### Sample job
+
+```ruby
+class MyApp::Sqs::Events::MyEvent < SimpleSqs::Events::Base
+  def process
+    arguments = event['Arguments']
+    # do whatever you want here my friend!
+  end
+end
+
 ```
 
 ## Development
