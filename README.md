@@ -24,7 +24,7 @@ The way that SimpleSqs works is that you will enqueue messages with an `event_na
 
 ```ruby
 # config/initializers/simple_sqs.rb <- if you are using Rails, as an example
-SimpleSqs::EVENTS_NAMESPACE = MyApp::Sqs::Events
+SIMPLE_SQS_EVENTS_NAMESPACE = MyApp::Sqs::Events
 ```
 
 Some more configuration needed:
