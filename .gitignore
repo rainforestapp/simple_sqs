@@ -7,3 +7,6 @@
 /pkg/
 /spec/reports/
 /tmp/
+
+# Local todo list for this project :)
+TODO.md
