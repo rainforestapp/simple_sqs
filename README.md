@@ -35,6 +35,10 @@ export SIMPLE_SQS_SECRET_KEY=...
 export SIMPLE_SQS_REGION=...
 ```
 
+### Librato prefix
+
+If you have multiple apps using SimpleSqs that all logs to the same Librato account, it is higly suggested to configure each app with a [custom prefix](https://github.com/librato/librato-rails#custom-prefixes).
+
 ## Usage
 
 You can have a daemon on Heroku, as an example, by puttin a line like this in your `Procfile`:
