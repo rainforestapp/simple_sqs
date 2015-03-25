@@ -23,13 +23,13 @@ class SimpleSqs::Processor
   private
   def process event
     logger.debug "Processing SQS event #{event.inspect}"
-    Librato.timing("sqs.process", source: event['EventType']) do
+    Librato.timing("#{SIMPLE_SQS_LIBRATO_PREFIX}.sqs.process", source: event['EventType']) do
       klass = SIMPLE_SQS_EVENTS_NAMESPACE.const_get(event['EventType'])
       sqs_event = klass.new(event.freeze)
 
       lag = ((Time.now - sqs_event.timestamp) * 1000).ceil
-      Librato.measure("sqs.lag", lag, source: event['EventType'])
-      Librato.increment("sqs.events", source: event['EventType'])
+      Librato.measure("#{SIMPLE_SQS_LIBRATO_PREFIX}.sqs.lag", lag, source: event['EventType'])
+      Librato.increment("#{SIMPLE_SQS_LIBRATO_PREFIX}.sqs.events", source: event['EventType'])
 
       sqs_event.process
     end

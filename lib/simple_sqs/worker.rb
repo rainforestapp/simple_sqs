@@ -40,7 +40,7 @@ class SimpleSqs::Worker
       processor.process_sqs_message json_message
     rescue Exception => e
       logger.error "SQS: #{message.message_id}\t#{e.message}\t#{e.backtrace}"
-      Librato.increment('sqs.error')
+      Librato.increment("#{SIMPLE_SQS_LIBRATO_PREFIX}.sqs.error")
       handle_message_error(message, exception: e)
     end
   end
@@ -48,7 +48,7 @@ class SimpleSqs::Worker
   def handle_message_error(message, exception: nil)
     if message.attributes['ApproximateReceiveCount'].to_i > ENV.fetch('MAX_SQS_MESSAGE_RETRY', 5)
       logger.error "Deleting SQS message after multiple failures. #{message.body} #{exception}"
-      Librato.increment('sqs.fatal_error')
+      Librato.increment("#{SIMPLE_SQS_LIBRATO_PREFIX}.sqs.fatal_error")
       client.delete_message(
         queue_url: @queue_url,
         receipt_handle: message.receipt_handle)
