@@ -39,6 +39,17 @@ export SIMPLE_SQS_REGION=...
 
 If you have multiple apps using SimpleSqs that all logs to the same Librato account, it is higly suggested to configure each app with a [custom prefix](https://github.com/librato/librato-rails#custom-prefixes).
 
+### Rake task
+
+To be able to use the polling included in SimpleSqs, you can just add this to your Rakefile:
+
+```ruby
+spec = Gem::Specification.find_by_name 'simple_sqs'
+load "#{spec.gem_dir}/lib/tasks/simple_sqs.rake"
+```
+
+And then start this rake task to start polling: `bundle exec rake simple_sqs:daemon`
+
 ## Usage
 
 You can have a daemon on Heroku, as an example, by puttin a line like this in your `Procfile`:
