@@ -22,7 +22,7 @@ class SimpleSqs::Processor
 
   private
   def process event
-    logger.debug "Processing SQS event #{event.inspect}"
+    logger.info "Processing SQS event #{event.inspect}"
     Librato.timing("sqs.process", source: event['EventType']) do
       klass = SIMPLE_SQS_EVENTS_NAMESPACE.const_get(event['EventType'])
       sqs_event = klass.new(event.freeze)
