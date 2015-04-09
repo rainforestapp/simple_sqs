@@ -1,6 +1,16 @@
 class SimpleSqs::Worker
   attr_reader :client, :processor
 
+  # Allow another worker to get the message after this long. Suggest 25%-50% more
+  # than your average job
+  VISIBILITY_TIMEOUT = ENV.fetch('SIMPLE_SQS_VISABILITY_TIMEOUT', 15).to_i.freeze
+
+  # Set to false if you're using a redrive policy on your queue.
+  DELETE_AFTER_MAX_RETRY = (ENV.fetch('DELETE_AFTER_MAX_RETRY', 'true').downcase == 'true').freeze
+
+  # If DELETE_AFTER_MAX_RETRY enabled, delete after this many retrys
+  MAX_RETRY = ENV.fetch('MAX_SQS_MESSAGE_RETRY', 5).to_i.freeze
+
   def initialize queue_url:
     @queue_url = queue_url
     @client = Aws::SQS::Client.new(
@@ -9,7 +19,7 @@ class SimpleSqs::Worker
       region: ENV.fetch('SIMPLE_SQS_REGION')
     )
     @processor = SimpleSqs::Processor.new
-    @poller = Aws::SQS::QueuePoller.new(@queue_url, { client: @client })
+    @poller = Aws::SQS::QueuePoller.new(@queue_url, {client: @client})
   end
 
   def start
@@ -23,7 +33,7 @@ class SimpleSqs::Worker
       trap "TERM", -> (*args) { stop_polling }
     end
 
-    @poller.poll(visibility_timeout: 5) do |message|
+    @poller.poll(visibility_timeout: VISIBILITY_TIMEOUT) do |message|
       process(message)
     end
   end
@@ -37,7 +47,7 @@ class SimpleSqs::Worker
   def process(message)
     json_message = MultiJson.decode(message.body)
     begin
-      processor.process_sqs_message json_message
+      processor.process_sqs_message(json_message)
     rescue Exception => e
       logger.error "SQS: #{message.message_id}\t#{e.message}\t#{e.backtrace}"
       Librato.increment('sqs.error')
@@ -46,26 +56,15 @@ class SimpleSqs::Worker
   end
 
   def handle_message_error(message, exception: nil)
-    if message.attributes['ApproximateReceiveCount'].to_i > ENV.fetch('MAX_SQS_MESSAGE_RETRY', 5)
+    if DELETE_AFTER_MAX_RETRY && message.attributes['ApproximateReceiveCount'].to_i > MAX_RETRY
       logger.error "Deleting SQS message after multiple failures. #{message.body} #{exception}"
       Librato.increment('sqs.fatal_error')
-      client.delete_message(
-        queue_url: @queue_url,
-        receipt_handle: message.receipt_handle)
+      client.delete_message(queue_url: @queue_url, receipt_handle: message.receipt_handle)
     else
       # The `poll` loop usually deletes the messages in SQS by default, but we want to
       # retry to run those as they errored out.
       throw :skip_delete
     end
-  end
-
-  def options
-    @options ||= {
-      queue_url: @queue_url,
-      visibility_timeout: 10,
-      wait_time_seconds: 15,
-      attribute_names: [:all]
-    }.freeze
   end
 
   def logger

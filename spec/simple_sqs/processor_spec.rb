@@ -8,7 +8,7 @@ describe SimpleSqs::Processor do
 
   describe ".process_sqs_message" do
     it 'loads the appropriate class and process it' do
-      SimpleSqs::EVENTS_NAMESPACE = DummyApp::Sqs::Events
+      SIMPLE_SQS_EVENTS_NAMESPACE = DummyApp::Sqs::Events
       DummyApp::Sqs::Events::SomeEvent.any_instance.should_receive(:process)
       described_class.new.process_sqs_message fake_sqs_message('SomeEvent', Time.now)
     end

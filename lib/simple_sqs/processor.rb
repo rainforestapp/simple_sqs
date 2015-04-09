@@ -35,6 +35,7 @@ class SimpleSqs::Processor
     end
   rescue NameError => e
     Raven.capture_exception(e, extra: {parameters: event, cgi_data: ENV})
+    logger.error e
   end
 
   def logger
