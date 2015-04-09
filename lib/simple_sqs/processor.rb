@@ -24,7 +24,7 @@ class SimpleSqs::Processor
   def process event
     logger.info "Processing SQS event #{event.inspect}"
     Librato.timing("sqs.process", source: event['EventType']) do
-      klass = SimpleSqs::EVENTS_NAMESPACE.const_get(event['EventType'])
+      klass = SIMPLE_SQS_EVENTS_NAMESPACE.const_get(event['EventType'])
       sqs_event = klass.new(event.freeze)
 
       lag = ((Time.now - sqs_event.timestamp) * 1000).ceil
