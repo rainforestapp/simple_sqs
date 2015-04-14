@@ -56,6 +56,10 @@ class SimpleSqs::Worker
   end
 
   def handle_message_error(message, exception: nil)
+    if exception
+      Raven.capture_exception(exception, extra: {parameters: message, cgi_data: ENV})
+    end
+
     if DELETE_AFTER_MAX_RETRY && message.attributes['ApproximateReceiveCount'].to_i > MAX_RETRY
       logger.error "Deleting SQS message after multiple failures. #{message.body} #{exception}"
       Librato.increment('sqs.fatal_error')

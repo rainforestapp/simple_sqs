@@ -36,5 +36,12 @@ describe SimpleSqs::Worker do
         expect(e.message).to eq "uncaught throw :skip_delete"
       end
     end
+
+    context 'when there is an error' do
+      it 'raises the exception to Sentry/Raven' do
+        expect(Raven).to receive(:capture_exception)
+        subject.send(:process, message)
+      end
+    end
   end
 end
