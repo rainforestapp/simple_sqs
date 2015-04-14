@@ -40,7 +40,10 @@ describe SimpleSqs::Worker do
     context 'when there is an error' do
       it 'raises the exception to Sentry/Raven' do
         expect(Raven).to receive(:capture_exception)
-        subject.send(:process, message)
+
+        expect {
+          subject.send(:process, message)
+        }.to raise_error
       end
     end
   end
