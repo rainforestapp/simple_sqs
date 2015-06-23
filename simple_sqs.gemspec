@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Jean-Philippe Boily"]
   spec.email         = ["j@jipi.ca"]
 
-  spec.summary       = 'Write a short summary, because Rubygems requires one.'
+  spec.summary       = 'Opinionated but Simple SQS wrapper.'
   spec.homepage      = 'https://github.com/rainforestapp/simple_sqs'
   spec.license       = "MIT"
 
