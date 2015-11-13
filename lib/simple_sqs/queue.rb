@@ -23,4 +23,17 @@ class SimpleSqs::Queue
       message_body: body.to_json,
     )
   end
+
+  def approximate_number_of_messages
+    get_attribute('ApproximateNumberOfMessages')
+  end
+
+  private
+  def get_attribute attribute
+    resp = client.get_queue_attributes(
+      attribute_names: [attribute],
+      queue_url: @queue_url
+    )
+    resp.attributes[attribute]
+  end
 end
