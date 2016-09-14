@@ -26,8 +26,10 @@ describe SimpleSqs::Queue do
 
   describe '#approximate_number_of_messages' do
     it 'gets the number of messages' do
-      expect(subject.client).to receive(:get_queue_atttributes).with(queue_url: ENV.fetch('SIMPLE_SQS_QUEUE_URL'), attribute_names: ['ApproximateNumberOfMessages'])
-      subject.approximate_number_of_messages
+      expect(subject.client).to receive(:get_queue_attributes)
+                                  .with(queue_url: ENV.fetch('SIMPLE_SQS_QUEUE_URL'), attribute_names: ['ApproximateNumberOfMessages'])
+                                  .and_return double(attributes: { 'ApproximateNumberOfMessages' => 42 })
+      expect(subject.approximate_number_of_messages).to equal 42
     end
   end
 end
