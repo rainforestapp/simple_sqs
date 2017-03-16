@@ -37,6 +37,11 @@ describe SimpleSqs::Worker do
       end
     end
 
+    it 'passes through the approximate receive count' do
+      subject.processor.should receive(:process_sqs_message).with({ "Events" => [{}] }, { :approximate_receive_count => "1"})
+      subject.send(:process, message)
+    end
+
     context 'when there is an error' do
       it 'raises the exception to Sentry/Raven' do
         expect(Raven).to receive(:capture_exception)
