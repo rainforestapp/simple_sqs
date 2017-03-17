@@ -38,7 +38,7 @@ describe SimpleSqs::Worker do
     end
 
     it 'passes through the approximate receive count' do
-      subject.processor.should receive(:process_sqs_message).with({ "Events" => [{}] }, { :approximate_receive_count => "1"})
+      subject.processor.should receive(:process_sqs_message).with({ "Events" => [{}] }, message)
       subject.send(:process, message)
     end
 
