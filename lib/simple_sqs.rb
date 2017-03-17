@@ -7,6 +7,7 @@ require "simple_sqs/queue"
 require "sentry-raven"
 require "librato-rails"
 require "aws-sdk"
+require 'multi_json'
 
 module SimpleSqs
   # Your code goes here...
