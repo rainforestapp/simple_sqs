@@ -19,3 +19,8 @@ end
 RSpec.configure do |config|
   config.include SimpleSqsHelpers
 end
+
+ENV['SIMPLE_SQS_QUEUE_URL'] ||= 'fake'
+ENV['SIMPLE_SQS_PUBLIC_KEY'] ||= 'fake'
+ENV['SIMPLE_SQS_SECRET_KEY'] ||= 'fake'
+ENV['SIMPLE_SQS_REGION'] ||= 'us-east-1'
