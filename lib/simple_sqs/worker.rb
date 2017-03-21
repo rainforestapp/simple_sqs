@@ -45,9 +45,9 @@ class SimpleSqs::Worker
   end
 
   def process(message)
-    json_message = MultiJson.decode(message.body)
+    json_message_body = MultiJson.decode(message.body)
     begin
-      processor.process_sqs_message(json_message)
+      processor.process_sqs_message(json_message_body, message)
     rescue Exception => e
       logger.error "SQS: #{message.message_id}\t#{e.message}\t#{e.backtrace}"
       Librato.increment('sqs.error')

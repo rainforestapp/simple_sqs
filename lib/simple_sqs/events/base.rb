@@ -1,7 +1,9 @@
 class SimpleSqs::Events::Base
-  attr_reader :event
-  def initialize(event)
+  attr_reader :event, :sqs_message
+
+  def initialize(event, sqs_message = nil)
     @event = event
+    @sqs_message = sqs_message
   end
 
   def process
