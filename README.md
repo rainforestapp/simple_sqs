@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/rainforestapp/simple_sqs.svg)](https://travis-ci.org/rainforestapp/simple_sqs)
 
-SimpleSqs is a super simple abstraction of SQS. You can have a daemon polling and running jobs for messages, and enqueue some messages too.
+SimpleSqs is a super simple abstraction of SQS. You can have a daemon polling and running jobs for messages, and enqueue some messages too. It was developed by Rainforest QA, a [web app testing](https://www.rainforestqa.com/product/web-app-testing/) platform.
 
 ## Installation
 
