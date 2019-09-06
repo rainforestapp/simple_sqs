@@ -6,8 +6,8 @@
 require 'logger'
 
 class SimpleSqs::Processor
-  def process_sqs_message json_message_body, sqs_message = nil
-    if Object.const_defined?("ActiveRecord")
+  def process_sqs_message(json_message_body, sqs_message = nil, transaction_safe = true)
+    if Object.const_defined?("ActiveRecord") && transaction_safe
       ActiveRecord::Base.transaction do
         json_message_body['Events'].each do |event|
           process event, sqs_message

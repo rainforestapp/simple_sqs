@@ -3,6 +3,22 @@ require 'spec_helper'
 describe SimpleSqs::Worker do
   subject { SimpleSqs::Worker.new(queue_url: ENV.fetch('SIMPLE_SQS_QUEUE_URL')) }
 
+  describe '#initialize' do
+    it 'defaults to transaction_safe = true' do
+      expect(subject.transaction?).to be(true)
+    end
+
+    describe 'sets transaction_safe = false if SIMPLE_SQS_NO_AR_TRANSACTION is set' do
+      ['', 'bar', 0].each do |value|
+        it "false with variable = '#{value}'" do
+          allow(ENV).to receive(:fetch).and_call_original
+          expect(ENV).to receive(:fetch).with('SIMPLE_SQS_NO_AR_TRANSACTION', true).and_return(value)
+          expect(subject.transaction?).to be(false)
+        end
+      end
+    end
+  end
+
   describe "#receive_and_process" do
     let(:body) do
       { 'Events' => [ { } ] }
@@ -34,7 +50,14 @@ describe SimpleSqs::Worker do
     end
 
     it 'passes through the approximate receive count' do
-      expect(subject.processor).to receive(:process_sqs_message).with({ "Events" => [{}] }, message)
+      expect(subject.processor).to receive(:process_sqs_message).with({ "Events" => [{}] }, message, true)
+      subject.send(:process, message)
+    end
+
+    it 'passes SIMPLE_SQS_NO_AR_TRANSACTION to the processor' do
+      allow(ENV).to receive(:fetch).and_call_original
+      expect(ENV).to receive(:fetch).with('SIMPLE_SQS_NO_AR_TRANSACTION', true).and_return(false)
+      expect(subject.processor).to receive(:process_sqs_message).with({ "Events" => [{}] }, message, false)
       subject.send(:process, message)
     end
 
