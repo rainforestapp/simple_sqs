@@ -11,8 +11,7 @@ describe SimpleSqs::Worker do
     describe 'sets transaction_safe = false if SIMPLE_SQS_NO_AR_TRANSACTION is set' do
       ['', 'bar', 0].each do |value|
         it "false with variable = '#{value}'" do
-          allow(ENV).to receive(:fetch).and_call_original
-          expect(ENV).to receive(:fetch).with('SIMPLE_SQS_NO_AR_TRANSACTION', true).and_return(value)
+          expect(ENV).to receive(:key?).with('SIMPLE_SQS_NO_AR_TRANSACTION').and_return(value)
           expect(subject.transaction?).to be(false)
         end
       end
@@ -55,8 +54,7 @@ describe SimpleSqs::Worker do
     end
 
     it 'passes SIMPLE_SQS_NO_AR_TRANSACTION to the processor' do
-      allow(ENV).to receive(:fetch).and_call_original
-      expect(ENV).to receive(:fetch).with('SIMPLE_SQS_NO_AR_TRANSACTION', true).and_return(false)
+      expect(ENV).to receive(:key?).with('SIMPLE_SQS_NO_AR_TRANSACTION').and_return(true)
       expect(subject.processor).to receive(:process_sqs_message).with({ "Events" => [{}] }, message, false)
       subject.send(:process, message)
     end

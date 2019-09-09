@@ -20,7 +20,7 @@ class SimpleSqs::Worker
     )
     @processor = SimpleSqs::Processor.new
     @poller = Aws::SQS::QueuePoller.new(@queue_url, {client: @client})
-    @transaction = (ENV.fetch('SIMPLE_SQS_NO_AR_TRANSACTION', true) == true)
+    @transaction = !ENV.key?('SIMPLE_SQS_NO_AR_TRANSACTION')
   end
 
   def transaction?
