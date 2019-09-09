@@ -20,6 +20,11 @@ class SimpleSqs::Worker
     )
     @processor = SimpleSqs::Processor.new
     @poller = Aws::SQS::QueuePoller.new(@queue_url, {client: @client})
+    @transaction = !ENV.key?('SIMPLE_SQS_NO_AR_TRANSACTION')
+  end
+
+  def transaction?
+    @transaction
   end
 
   def start
@@ -47,7 +52,7 @@ class SimpleSqs::Worker
   def process(message)
     json_message_body = MultiJson.decode(message.body)
     begin
-      processor.process_sqs_message(json_message_body, message)
+      processor.process_sqs_message(json_message_body, message, transaction?)
     rescue Exception => e
       logger.error "SQS: #{message.message_id}\t#{e.message}\t#{e.backtrace}"
       Librato.increment('sqs.error')

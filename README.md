@@ -37,6 +37,14 @@ export SIMPLE_SQS_SECRET_KEY=...
 export SIMPLE_SQS_REGION=...
 ```
 
+### ActiveRecord
+
+If your project uses ActiveRecord, the processing of messages will take place in a transaction. Stop this behaviour by setting the environment variable `SIMPLE_SQS_NO_AR_TRANSACTION` with any value:
+
+```
+export SIMPLE_SQS_NO_AR_TRANSACTION=true
+```
+
 ### Librato prefix
 
 If you have multiple apps using SimpleSqs that all logs to the same Librato account, it is higly suggested to configure each app with a [custom prefix](https://github.com/librato/librato-rails#custom-prefixes).
