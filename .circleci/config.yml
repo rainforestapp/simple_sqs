@@ -1,0 +1,87 @@
+version: 2.1
+
+jobs:
+  test:
+    parameters:
+      ruby:
+        type: string
+    docker:
+      - image: cimg/ruby:<< parameters.ruby >>
+        auth:
+          username: $DOCKERHUB_USERNAME
+          password: $DOCKERHUB_TOKEN
+    steps:
+      - checkout
+      - run:
+          name: Install Ruby gems
+          command: |
+            bundle config set --local path 'vendor/bundle'
+            bundle check || bundle install --jobs=4 --retry=3
+      - run:
+          name: Set up test output directory
+          command: sudo install -o circleci -d ~/rspec
+      - run:
+          name: RSpec
+          command: |
+            bundle exec rspec \
+              --color \
+              --require spec_helper \
+              --format documentation \
+              --format RspecJunitFormatter \
+              --out ~/rspec/rspec.xml
+  push_to_rubygems:
+    docker:
+      - image: cimg/ruby:3.1.2
+        auth:
+          username: $DOCKERHUB_USERNAME
+          password: $DOCKERHUB_TOKEN
+    steps:
+      - checkout
+      - run:
+          name: Create .gem/credentials file
+          command: |
+            mkdir ~/.gem
+            echo "---
+              :rubygems_api_key: $RUBYGEMS_API_KEY
+            " > ~/.gem/credentials
+            chmod 600 ~/.gem/credentials
+      - run:
+          name: Release simple_sqs
+          command: |
+            gem build simple_sqs
+            gem push simple_sqs-*.gem
+
+workflows:
+  test_and_deploy:
+    jobs:
+      - test:
+          matrix:
+            alias: old-ruby
+            parameters:
+              ruby: ["2.7.6", "3.0.4"]
+          filters:
+            tags:
+              only:
+                - /^v.*/
+          context:
+            - DockerHub
+      - test:
+          ruby: "3.1.2"
+          filters:
+            tags:
+              only:
+                - /^v.*/
+          context:
+            - DockerHub
+      - push_to_rubygems:
+          requires:
+            - test
+          filters:
+            branches:
+              ignore:
+                - /.*/
+            tags:
+              only:
+                - /^v.*/
+          context:
+            - DockerHub
