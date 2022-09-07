@@ -47,7 +47,7 @@ export SIMPLE_SQS_NO_AR_TRANSACTION=true
 
 ### Librato prefix
 
-If you have multiple apps using SimpleSqs that all logs to the same Librato account, it is higly suggested to configure each app with a [custom prefix](https://github.com/librato/librato-rails#custom-prefixes).
+If you have multiple apps using SimpleSqs that all logs to the same Librato account, it is higly suggested to configure each app with a [custom prefix](https://github.com/librato/librato-rails#custom-prefixes). Support is provided for Librato accounts using [sources, not tags](https://www.librato.com/docs/kb/faq/account_questions/tags_or_sources/).
 
 ### Rake task
 
