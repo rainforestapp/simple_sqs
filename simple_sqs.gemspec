@@ -19,7 +19,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency "aws-sdk"
-  spec.add_dependency "librato-rails", "~> 1"
+  spec.add_dependency "librato-rails", ">= 1", "< 3"
   spec.add_dependency "sentry-raven"
   spec.add_dependency "multi_json"
   spec.add_development_dependency "rake"
