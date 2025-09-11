@@ -45,9 +45,6 @@ If your project uses ActiveRecord, the processing of messages will take place in
 export SIMPLE_SQS_NO_AR_TRANSACTION=true
 ```
 
-### Librato prefix
-
-If you have multiple apps using SimpleSqs that all logs to the same Librato account, it is higly suggested to configure each app with a [custom prefix](https://github.com/librato/librato-rails#custom-prefixes). Support is provided for Librato accounts using [sources, not tags](https://www.librato.com/docs/kb/faq/account_questions/tags_or_sources/).
 
 ### Rake task
 
@@ -91,7 +88,9 @@ end
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `bin/console` for an interactive prompt that will allow you to experiment.
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release` to create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+To install this gem onto your local machine, run `bundle exec rake install`.
+
+To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release` to create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 
 ## Contributing
 

@@ -21,18 +21,12 @@ class SimpleSqs::Processor
   end
 
   private
-  def process event, sqs_message
+
+  def process(event, sqs_message)
     logger.debug "Processing SQS event #{event.inspect}, raw message: #{sqs_message.inspect}"
-    Librato.timing("sqs.process", source: event['EventType']) do
-      klass = SIMPLE_SQS_EVENTS_NAMESPACE.const_get(event['EventType'])
-      sqs_event = klass.new(event.freeze, sqs_message)
-
-      lag = ((Time.now - sqs_event.timestamp) * 1000).ceil
-      Librato.measure("sqs.lag", lag, source: event['EventType'])
-      Librato.increment("sqs.events", source: event['EventType'])
-
-      sqs_event.process
-    end
+    klass = SIMPLE_SQS_EVENTS_NAMESPACE.const_get(event['EventType'])
+    sqs_event = klass.new(event.freeze, sqs_message)
+    sqs_event.process
   rescue NameError => e
     Raven.capture_exception(e, extra: {parameters: event, cgi_data: ENV})
     logger.error e
